@@ -1,4 +1,4 @@
-local required_version = "1.62.1.135396"  -- Change this to the required version
+local required_version = "1.66.1.140467"  -- Change this to the required version
 
 function getSimCityVersion()
     local info = gg.getTargetInfo()
