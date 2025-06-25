@@ -20,7 +20,7 @@ end
 
 gg.toast("SimCity BuildIt version is compatible: v" .. current_version)
 
-gg.alert("Metal > I \n Wood > II \n Plastic > III")
+gg.alert("Metal > I \n Wood > II \n Plastic > III. \n Waritem example magentism \n metal > anvil \n Wood > bynocular \n Plastic > Hydrant")
 
 mainMenu = gg.choice({"War Items", "Booster", "Exit"}, nil, "Select a category")
 if mainMenu == nil or mainMenu == 3 then
