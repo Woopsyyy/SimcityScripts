@@ -22,18 +22,8 @@ gg.toast("SimCity BuildIt version is compatible: v" .. current_version)
 
 gg.alert("Metal > I \n Wood > II \n Plastic > III")
 
-menu = gg.choice({
-    "Pump",
-    "Umbrella",
-    "Jackpot",
-    "Vamp",
-    "Freeze",
-    "Dud",
-    "Thief",
-    "Exit"
-}, nil, "Select an item to modify")
-
-if menu == nil then
+mainMenu = gg.choice({"War Items", "Booster", "Exit"}, nil, "Select a category")
+if mainMenu == nil or mainMenu == 3 then
     os.exit()
 end
 
@@ -53,14 +43,22 @@ materials = {
     III = -1270634091 -- Plastic
 }
 
-function modifyItem(selection)
+waritems = {
+
+    ["Magnet"] = {Anvil = 253271711, Hydrant = 860715237, Bynocular = 1560176023},
+    ["Mellow"] = {Megaphone = -1540742631, Pliers = -1962827238, Propeller = 352219700},
+    ["Shield"] = {Gasoline = -916988905, Medkit = 226338627},
+    ["Doom"] =  {Duck = 417968558}
+
+}
+
+function modifyBooster(selection)
     local choices
     if selection == "Thief" then
         choices = gg.multiChoice({"I", "II"}, nil, "Select levels to modify")
     else
         choices = gg.multiChoice({"I", "II", "III"}, nil, "Select levels to modify")
     end
-
     if choices then
         local message = ""
         for key, value in pairs(choices) do
@@ -69,7 +67,6 @@ function modifyItem(selection)
                 gg.refineNumber(materials["I"])
                 gg.getResults(100)
                 gg.editAll(items[selection]["I"], gg.TYPE_DWORD)
-
                 if key == 1 then
                     message = message .. "Metal > I\n"
                 elseif key == 2 then
@@ -88,10 +85,49 @@ function modifyItem(selection)
             end
         end
         gg.alert(message)
-        gg.clearResults()  -- Clear search results after modification
+        gg.clearResults()
     end
 end
 
-local itemKeys = {"Pump", "Umbrella", "Jackpot", "Vamp", "Freeze", "Dud", "Thief"}
-modifyItem(itemKeys[menu])
-gg.clearResults() -- Clear search results after all modifications
+function modifyWarItem(selection)
+    local warLevels = {}
+    for k, _ in pairs(waritems[selection]) do
+        table.insert(warLevels, k)
+    end
+    local choices = gg.multiChoice(warLevels, nil, "Select parts to modify")
+    if choices then
+        local message = ""
+        for idx, selected in pairs(choices) do
+            if selected then
+                local partName = warLevels[idx]
+                local code = waritems[selection][partName]
+                gg.searchNumber(code, gg.TYPE_DWORD)
+                gg.refineNumber(code)
+                gg.getResults(100)
+                gg.editAll(code, gg.TYPE_DWORD)
+                message = message .. selection .. " > " .. partName .. "\n"
+            end
+        end
+        gg.alert(message)
+        gg.clearResults()
+    end
+end
+
+if mainMenu == 1 then
+    -- War Items
+    local warKeys = {}
+    for k, _ in pairs(waritems) do table.insert(warKeys, k) end
+    local warMenu = gg.choice(warKeys, nil, "Select a War Item")
+    if warMenu ~= nil then
+        modifyWarItem(warKeys[warMenu])
+    end
+elseif mainMenu == 2 then
+    -- Booster
+    local itemKeys = {"Pump", "Umbrella", "Jackpot", "Vamp", "Freeze", "Dud", "Thief"}
+    local boosterMenu = gg.choice(itemKeys, nil, "Select a Booster Item")
+    if boosterMenu ~= nil then
+        modifyBooster(itemKeys[boosterMenu])
+    end
+end
+
+gg.clearResults()
